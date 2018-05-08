@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace LabPOO
 {
@@ -15,11 +18,38 @@ namespace LabPOO
         static void Main(string[] args)
         {
             cart = new List<Product>();
+            try
+            {
+                BinaryFormatter binF1 = new BinaryFormatter();
+                FileStream fs = File.Open("Carrito.txt", FileMode.Open);
+                cart = (List<Product>)binF1.Deserialize(fs);
+                fs.Close();
+            }
+            catch
+            {
+                int a = 1;
+            }
             market = new List<Product>();
             SupplyStore();
             while (true)
             {
                 PrintHeader();
+                List<string> productos = new List<string>();
+                productos.Add("Láminas de Lasaña");
+                productos.Add("Queso Rallado Parmesano");
+                productos.Add("Mantequilla");
+                productos.Add("Carne Molida");
+                productos.Add("Vino Blanco Caja");
+                productos.Add("Tomates Pelados en lata");
+                productos.Add("Bolsa de Zanahorias");
+                productos.Add("Malla de Cebollas");
+                productos.Add("Aceite de Oliva");
+                productos.Add("Sal Lobos");
+                productos.Add("Pimienta");
+                productos.Add("Harina");
+                productos.Add("Leche Entera");
+
+
                 Console.WriteLine("¿Que quieres hacer?\n");
                 Console.WriteLine("\t1. Ver Receta");
                 Console.WriteLine("\t2. Comprar");
@@ -51,6 +81,18 @@ namespace LabPOO
                     }
                     else if (answer == "5")
                     {
+                        int cont = 0;
+                        foreach (Product p in cart)
+                        {
+                            cont++;
+                        }
+                        if (cont > 0)
+                        {
+                            BinaryFormatter binF = new BinaryFormatter();
+                            FileStream fs1 = File.Open("Carrito.txt", FileMode.OpenOrCreate);
+                            binF.Serialize(fs1, cart);
+                            fs1.Close();
+                        }
                         Environment.Exit(1);
                     }
                 }
@@ -72,6 +114,11 @@ namespace LabPOO
                 Console.Write(i.ToString() + " ");
                 Thread.Sleep(1000);
             }
+            BinaryFormatter binF = new BinaryFormatter();
+            FileStream fs2 = File.Open("Carrito.txt", FileMode.OpenOrCreate);
+            List<Product> ua = new List<Product>();
+            binF.Serialize(fs2, ua);
+            fs2.Close();
             cart.Clear();
         }
 
@@ -99,7 +146,7 @@ namespace LabPOO
                 {
                     continue;
                 }
-            }           
+            }
         }
 
         public static void PrintCart()
@@ -191,5 +238,6 @@ namespace LabPOO
                 response = Console.ReadKey(true);
             }
         }
+
     }
 }
